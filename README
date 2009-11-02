@@ -1,0 +1,83 @@
+= LightningBF
+
+It's an implementation of the language whose name is not to be mentioned
+in polite company.  You know the one.  There's a nice article about it
+here:  http://esoteric.voxelperfect.net/wiki/BF .  (But please don't
+show that article to your grandmother, the shock could kill her!)  The
+URL up there provides a few trivial sample snippets, and links to more
+code, including decidedly non-trivial programs.
+
+A few small examples that were used to test the implementation are in
+the bf/ subdirectory.
+
+= For the already-initiated
+If you already know all you need to know about that language, then the
+summary on the open-to-interpretation parts are as follows:
+	* The pointer doesn't wrap, so you can segfault if you aren't
+	  careful.
+	* You get 640 * 2^10 cells.  640k ought to be enough for
+	  anybody.
+	* EOF on read() is a zero byte.
+	* Characters that are not one of the 8 BF commands are ignored.
+And then you can skip the rest, unless you're one of the uninitiated.
+
+= A simple description of the language
+You get an array of cells, all one byte in size, and all initialized to
+zero.  You also get a pointer, and it starts at the first cell.
+
+It has 8 commands, and that's all it does:
+
+	+	Increments the current cell by 1.
+	-	Decrements the current cell by 1.
+	>	Move the pointer to the next cell.
+	<	Move the pointer to the previous cell.
+	[	If the current cell is 0, skip to the matching ].
+	]	If the current cell is non-zero, jump to the matching [.
+	,	Read a byte from stdin into the current cell.
+	.	Print the byte in the current cell to stdout.
+
+The 8 commands are roughly equivalent to the following C code:
+
+	+	*ptr++;
+	-	*ptr--;
+	>	ptr++;
+	<	ptr--;
+	[	while(*ptr) {
+	]	}
+	,	*ptr = 0; read(0, ptr, 1);
+	.	write(1, ptr, 1);
+
+In fact, that's (roughly) how they're implemented.  And after all of
+that, you have a fun, esoteric (but Turing-complete) language.
+
+= Implementation
+The basic process the compiler goes through is to read the input file,
+one byte at a time, generate one batch of machine-language instructions
+for each valid input character, and when it's done, execute the
+generated machine code.
+
+The reason LightningBF was implemented to begin with was so that I could
+play around a little more with GNU Lightning.  The name isn't meant to
+imply that the compiler is fast or generates fast code; it just uses
+Lightning.
+
+It's not very well documented, but should serve as a fairly simple
+introduction to Lightning if you have a reference ready.  (Also, I found
+the current version of lightning to be a little hard to locate, and 1.2
+is a fairly old release (no x86-64!), so you may find this link helpful:
+http://savannah.gnu.org/git/?group=lightning .)
+
+In fact, the compiler is fairly trivial.  It's a fairly straightforward,
+easy to read implementation of a JIT-compiler for the language, and
+absolutely zero optimization is performed.  (Some low-hanging
+optimization fruit:  strings of +s or -s could, instead of
+load/inc-or-dec-by-1/store, be done with only one load, an increment or
+a decrement by the number of +s or -s, and one store.)
+
+= License
+Public domain.  It's trivial code.  I wrote it to get a little more
+familiar with Lightning.
+
+A copy of Lightning is distributed along with this code.  Its license is
+the LGPL, and a copy of the LGPL and the GPL is in the lightning
+directory.
