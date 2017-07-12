@@ -2,10 +2,9 @@
 
 It's an implementation of the language whose name is not to be mentioned
 in polite company.  You know the one.  There's a nice article about it
-here:  http://esoteric.voxelperfect.net/wiki/BF .  (But please don't
-show that article to your grandmother, the shock could kill her!)  The
-URL up there provides a few trivial sample snippets, and links to more
-code, including decidedly non-trivial programs.
+here:  http://esoteric.voxelperfect.net/wiki/BF , which provides a few
+trivial sample snippets, and links to more code, including decidedly
+non-trivial programs.
 
 A few small examples that were used to test the implementation are in
 the bf/ subdirectory.
